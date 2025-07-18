@@ -1,0 +1,2 @@
+# SistemPakar
+mendiagnosis penyakt
