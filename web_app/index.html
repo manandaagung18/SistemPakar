@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistem Pakar Diagnosa</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 40px; }
+        .checkbox-group { margin-bottom: 20px; }
+        .checkbox-group label { display: block; }
+        button { padding: 10px 20px; }
+        .result { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border-left: 5px solid #4CAF50; }
+        img { max-width: 200px; margin-top: 10px; }
+        textarea { width: 100%; height: 80px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>🧠 Sistem Pakar Diagnosa Flu & Batuk</h2>
+    <p>Pilih gejala berikut:</p>
+    <div class="checkbox-group">
+        <label><input type="checkbox" value="demam"> Demam</label>
+        <label><input type="checkbox" value="batuk"> Batuk</label>
+        <label><input type="checkbox" value="pilek"> Pilek</label>
+        <label><input type="checkbox" value="sakit tenggorokan"> Sakit Tenggorokan</label>
+        <label><input type="checkbox" value="sesak napas"> Sesak Napas</label>
+        <label><input type="checkbox" value="kehilangan penciuman"> Kehilangan Penciuman</label>
+    </div>
+
+    <button onclick="diagnosa()">Diagnosa</button>
+
+    <div id="hasil" class="result" style="display:none;"></div>
+    <textarea id="riwayat" readonly placeholder="Hasil diagnosa akan tersimpan di sini..."></textarea>
+
+    <script>
+        const rules = [
+            {
+                gejala: ["demam", "batuk", "pilek"],
+                penyakit: "Flu Biasa",
+                saran: "Banyak istirahat, minum air hangat, konsumsi vitamin C.",
+                gambar: "FLU.jpeg"
+            },
+            {
+                gejala: ["batuk", "pilek", "sakit tenggorokan"],
+                penyakit: "Batuk Pilek",
+                saran: "Konsumsi obat batuk, hindari minuman dingin.",
+                gambar: "BATUK.jpg"
+            },
+            {
+                gejala: ["demam", "batuk", "sesak napas", "kehilangan penciuman"],
+                penyakit: "Gejala COVID-19",
+                saran: "Segera lakukan tes swab dan isolasi mandiri.",
+                gambar: "covid-19.jpg"
+            }
+        ];
+
+        let riwayatList = [];
+
+        function diagnosa() {
+            const checkboxes = document.querySelectorAll("input[type='checkbox']:checked");
+            const gejalaUser = Array.from(checkboxes).map(cb => cb.value);
+            let hasil = "Penyakit tidak teridentifikasi.<br><b>Saran:</b> Silakan konsultasi ke dokter.";
+            let gambar = "";
+
+            for (const rule of rules) {
+                if (rule.gejala.every(g => gejalaUser.includes(g))) {
+                    hasil = "<b>Penyakit:</b> " + rule.penyakit + "<br><b>Saran:</b> " + rule.saran;
+                    gambar = rule.gambar;
+                    break;
+                }
+            }
+
+            const hasilDiv = document.getElementById("hasil");
+            hasilDiv.innerHTML = hasil;
+            if (gambar) {
+                hasilDiv.innerHTML += `<br><img src="${gambar}" alt="Gambar penyakit">`;
+            }
+            hasilDiv.style.display = "block";
+
+            // Simpan ke riwayat
+            riwayatList.push(gejalaUser.join(", ") + " → " + hasil.replace(/<[^>]*>?/gm, ''));
+            document.getElementById("riwayat").value = riwayatList.join("\\n\\n");
+        }
+    </script>
+</body>
+</html>
